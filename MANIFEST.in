@@ -1,0 +1,5 @@
+include *.in
+recursive-include src *.html
+recursive-include src *.css
+recursive-include src *.po
+recursive-include src *.mo

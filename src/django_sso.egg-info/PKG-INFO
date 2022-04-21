@@ -1,0 +1,12 @@
+Metadata-Version: 1.2
+Name: django-sso
+Version: 1.0.2
+Summary: UNKNOWN
+Home-page: https://github.com/davidhaker/django-sso
+Author: DAVIDhaker
+Author-email: me@davidhaker.ru
+License: UNKNOWN
+Description: UNKNOWN
+Keywords: Django SSO Single Sign-On
+Platform: UNKNOWN
+Requires-Python: >=3

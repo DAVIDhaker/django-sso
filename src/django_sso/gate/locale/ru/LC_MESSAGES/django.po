@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-21 07:45+0300\n"
+"POT-Creation-Date: 2022-04-21 21:50+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Mr DAVIDhaker <me@davidhaker.ru>\n"
 "Language-Team: Mr DAVIDhaker <me@davidhaker.ru>\n"
@@ -32,71 +32,71 @@ msgstr "Логин/Почта"
 msgid "Password"
 msgstr "Пароль"
 
-#: models.py:15
+#: models.py:17
 msgid "Name"
 msgstr "Имя"
 
-#: models.py:16
+#: models.py:18
 msgid "Base url"
 msgstr "Базовая ссылка"
 
-#: models.py:17
+#: models.py:19
 msgid "Enabled"
 msgstr "Активно"
 
-#: models.py:18 models.py:35
+#: models.py:20 models.py:53
 msgid "Token"
 msgstr "Токен"
 
-#: models.py:24
+#: models.py:42
 msgid "External service"
 msgstr "Внешний сервис"
 
-#: models.py:25
+#: models.py:43
 msgid "External services"
 msgstr "Внешние сервисы"
 
-#: models.py:33
+#: models.py:51
 msgid "Service"
 msgstr "Сервис"
 
-#: models.py:34
+#: models.py:52
 msgid "Created at"
 msgstr "Создан"
 
-#: models.py:36
+#: models.py:54
 msgid "User identy"
 msgstr "Уникальный идентификатор пользователя"
 
-#: models.py:36
+#: models.py:54
 msgid "E-Mail, login, etc."
 msgstr "E-Mail, логин и т.д."
 
-#: models.py:37
+#: models.py:55
 msgid "Next url"
 msgstr "Базовая ссылка"
 
-#: models.py:37
+#: models.py:55
 msgid "To go after success auth"
 msgstr "Для перехода после авторизации"
 
-#: models.py:38
+#: models.py:56
 msgid "Request has been activated"
 msgstr "Запрос авторизации активирован"
 
-#: models.py:39
+#: models.py:57
 msgid "Are used in external service"
 msgstr "Был применён во внешнем сервисе"
 
-#: models.py:42
+#: models.py:60
 msgid "Authentication request"
 msgstr "Запрос авторизации"
 
-#: models.py:43
+#: models.py:61
 msgid "Authentication requests"
 msgstr "Запросы авторизации"
 
-#: models.py:67
+#: models.py:89
 msgid "From service returned incorrect data"
 msgstr "От сервиса получен некорректный ответ"
 
@@ -120,7 +120,7 @@ msgstr "гость"
 msgid "Sign out"
 msgstr "Выход"
 
-#: views.py:74 views.py:109
+#: views.py:74 views.py:109 views.py:147 views.py:185
 msgid "\"token\" is'nt set"
 msgstr "Поле \"token\" не заполненно"
 
@@ -128,14 +128,18 @@ msgstr "Поле \"token\" не заполненно"
 msgid "\"next_url\" is'nt set"
 msgstr "Поле \"next_url\" не заполненно"
 
-#: views.py:82 views.py:114
+#: views.py:82 views.py:114 views.py:152
 msgid "Application token is'nt exist"
 msgstr "Токен приложения не существует"
 
-#: views.py:117
+#: views.py:117 views.py:155
 msgid "Authentication request token is'nt set"
 msgstr "Токен запроса авторизации не задан"
 
-#: views.py:127
+#: views.py:127 views.py:165
 msgid "Authentication request token is'nt exists"
 msgstr "Токен запроса авторизации не существует"
+
+#: views.py:188
+msgid "\"user_identy\" is'nt set"
+msgstr "Поле \"token\" не заполненно"
