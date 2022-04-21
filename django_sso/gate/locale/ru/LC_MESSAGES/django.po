@@ -1,0 +1,141 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST Mr DAVIDhaker <me@davidhaker.ru>, 2022.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: 1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-04-21 07:45+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Mr DAVIDhaker <me@davidhaker.ru>\n"
+"Language-Team: Mr DAVIDhaker <me@davidhaker.ru>\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
+"%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#: apps.py:8
+msgid "Single Sign-On"
+msgstr "Подсистема единого входа"
+
+#: forms.py:6
+msgid "Login/Email"
+msgstr "Логин/Почта"
+
+#: forms.py:7
+msgid "Password"
+msgstr "Пароль"
+
+#: models.py:15
+msgid "Name"
+msgstr "Имя"
+
+#: models.py:16
+msgid "Base url"
+msgstr "Базовая ссылка"
+
+#: models.py:17
+msgid "Enabled"
+msgstr "Активно"
+
+#: models.py:18 models.py:35
+msgid "Token"
+msgstr "Токен"
+
+#: models.py:24
+msgid "External service"
+msgstr "Внешний сервис"
+
+#: models.py:25
+msgid "External services"
+msgstr "Внешние сервисы"
+
+#: models.py:33
+msgid "Service"
+msgstr "Сервис"
+
+#: models.py:34
+msgid "Created at"
+msgstr "Создан"
+
+#: models.py:36
+msgid "User identy"
+msgstr "Уникальный идентификатор пользователя"
+
+#: models.py:36
+msgid "E-Mail, login, etc."
+msgstr "E-Mail, логин и т.д."
+
+#: models.py:37
+msgid "Next url"
+msgstr "Базовая ссылка"
+
+#: models.py:37
+msgid "To go after success auth"
+msgstr "Для перехода после авторизации"
+
+#: models.py:38
+msgid "Request has been activated"
+msgstr "Запрос авторизации активирован"
+
+#: models.py:39
+msgid "Are used in external service"
+msgstr "Был применён во внешнем сервисе"
+
+#: models.py:42
+msgid "Authentication request"
+msgstr "Запрос авторизации"
+
+#: models.py:43
+msgid "Authentication requests"
+msgstr "Запросы авторизации"
+
+#: models.py:67
+msgid "From service returned incorrect data"
+msgstr "От сервиса получен некорректный ответ"
+
+#: templates/django_sso/login.html:23 templates/django_sso/welcome.html:18
+msgid "Sign in"
+msgstr "Вход"
+
+#: templates/django_sso/login.html:26
+msgid "Log in"
+msgstr "Войти"
+
+#: templates/django_sso/welcome.html:9
+msgid "Y're welcome"
+msgstr "Добро пожаловать"
+
+#: templates/django_sso/welcome.html:13
+msgid "guest"
+msgstr "гость"
+
+#: templates/django_sso/welcome.html:22
+msgid "Sign out"
+msgstr "Выход"
+
+#: views.py:74 views.py:109
+msgid "\"token\" is'nt set"
+msgstr "Поле \"token\" не заполненно"
+
+#: views.py:77
+msgid "\"next_url\" is'nt set"
+msgstr "Поле \"next_url\" не заполненно"
+
+#: views.py:82 views.py:114
+msgid "Application token is'nt exist"
+msgstr "Токен приложения не существует"
+
+#: views.py:117
+msgid "Authentication request token is'nt set"
+msgstr "Токен запроса авторизации не задан"
+
+#: views.py:127
+msgid "Authentication request token is'nt exists"
+msgstr "Токен запроса авторизации не существует"
