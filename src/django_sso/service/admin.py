@@ -1,9 +1,6 @@
 from django.contrib import admin
-from django.http import JsonResponse
+from .views import login_view
 
-
-def login(request):
-    return JsonResponse({'ok': True})
 
 admin.autodiscover()
-admin.site.login = login
+admin.site.login = login_view
