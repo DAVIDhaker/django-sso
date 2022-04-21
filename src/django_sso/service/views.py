@@ -73,7 +73,7 @@ def accept_user_information(request):
 
     user_model = get_user_model()
 
-    user, created = User.objects.get_or_create(
+    user, created = user_model.objects.get_or_create(
         **{f'{user_model.USERNAME_FIELD}': request.POST['username']}
     )
 
@@ -96,7 +96,7 @@ def authorize_from_sso(request: WSGIRequest):
 
         user_model = get_user_model()
 
-        user = User.objects.filter(
+        user = user_model.objects.filter(
             **{f'{user_model.USERNAME_FIELD}': authorization_request['user_identy']}
         ).first()
 

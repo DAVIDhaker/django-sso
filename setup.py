@@ -12,6 +12,7 @@ setup(
             '**.html'
         ]
     },
+    description='README.md',
     include_package_data=True,
     url='https://github.com/davidhaker/django-sso',
     keywords='Django SSO Single Sign-On',
