@@ -1,3 +1,5 @@
+import importlib
+
 from django.conf import settings
 import requests
 from django.contrib.auth import get_user_model
@@ -54,7 +56,7 @@ def get_sso_authorization_request(sso_token: str) -> dict:
 
 def request_deauthentication(user):
     """
-    Call SSO gate to deauthorize user everywhere
+    Call SSO sso_gateway to deauthorize user everywhere
     """
     user_model = get_user_model()
 
@@ -73,3 +75,9 @@ def request_deauthentication(user):
             raise SSOException(result['error'])
     except Exception as e:
         raise SSOException(e)
+
+
+def get_event_acceptor():
+    a = 123
+    # importlib.('django_sso.backend')
+    # return

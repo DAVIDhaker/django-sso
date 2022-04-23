@@ -11,7 +11,6 @@ class ServiceAdmin(admin.ModelAdmin):
 
 @admin.register(AuthenticationRequest)
 class AuthenticationRequestAdmin(admin.ModelAdmin):
-	readonly_fields = 'token',
 	list_display = (
 		'service',
 		'user_identy',
@@ -19,6 +18,15 @@ class AuthenticationRequestAdmin(admin.ModelAdmin):
 		'used',
 	)
 
-	list_filter = 'service', 'used'
+	def has_add_permission(self, *args, **kwargs):
+		return False
+
+	def has_change_permission(self, *args, **kwargs):
+		return False
+
+	def has_delete_permission(self, *args, **kwargs):
+		return False
+
+	list_filter = 'service__name', 'used'
 	search_fields = 'user_identy',
 

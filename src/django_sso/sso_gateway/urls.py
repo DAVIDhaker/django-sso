@@ -12,6 +12,5 @@ urlpatterns = [
 	path('sso/get/', views.GetAuthenticationRequestView.as_view(), name="get"),
 	path('sso/make_used/', views.MakeUsedView.as_view(), name="make_used"),
 	path('sso/deauthenticate/', views.DeauthenticateView.as_view(), name="deauthenticate_view"),
-
 	path('welcome/', TemplateView.as_view(template_name='django_sso/welcome.html'), name="welcome"),
 ]

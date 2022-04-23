@@ -1,11 +1,11 @@
-# Django SSO (Single Sign-On) v1.0.0a
+# Django SSO (Single Sign-On) [Alpha version]
 
 Realization of SSO for Django. 
 
 This library contains two modules.
 
-- <u>Server</u> side - `django_sso.gate` module
-- <u>Service</u> side module - `django_sso`.`service`
+- <u>Server</u> side - `django_sso.sso_gateway` module
+- <u>Service</u> side module - `django_sso`.`sso_service`
 
 
 
@@ -17,17 +17,17 @@ One side - server with all accounts. Two side - many services, who can communica
 
 
 
-## Integration
+## Installation
 
 #### Server side
 
-1) Add to `INSTALLED_APPS` `django_sso`.`gate`
+1) Add to `INSTALLED_APPS` `django_sso`.`sso_gateway`
 
 ```python
 # project/settings.py
 INSTALLED_APPS = [
     # ...
-    'django_sso.gate',
+    'django_sso.sso_gateway',
 ]
 ```
 
@@ -36,7 +36,7 @@ INSTALLED_APPS = [
 2) Migrate server models
 
 ```python
-./manage.py migrate gate
+./manage.py migrate sso_gateway
 ```
 
 
@@ -48,17 +48,17 @@ INSTALLED_APPS = [
 
 urlpatterns = [
 	# ...,
-	path('', include('django_sso.gate.urls')),
+	path('', include('django_sso.sso_gateway.urls')),
 ]
 ```
 
 
 
-4) In the admin panel you can see now new section, named `SINGLE SIGN-ON`. And in `External services` you should be create new. With next fields:
+4) In the admin panel you can see now new section, named `SINGLE SIGN-ON`. And in `Subordinated services` you should be create new. With next fields:
 
 - `Name` - Human name of service
 - `Base url` - URL for redirects and access to service endpoints from server side. (Like https://your-service.example).
-- `Enabled` - Are external service active. (Inactive services can’t communicate with server side and server side can’t communicate with it)
+- `Enabled` - Are Subordinated service active. (Inactive services can’t communicate with server side and server side can’t communicate with it)
 - `Token` - Automatically generated token you should past to `settings.py ` to your service to `SSO_TOKEN` variable.
 
 
@@ -77,7 +77,7 @@ When library app attached to client side app. Admin login form will overridden w
 # project/settings.py
 INSTALLED_APPS = [
     # ...
-    'django_sso.service',
+    'django_sso.sso_service',
 ]
 ```
 
@@ -90,7 +90,7 @@ INSTALLED_APPS = [
 
 urlpatterns = [
     # ...,
-    path('', include('django_sso.service.urls')),    
+    path('', include('django_sso.sso_service.urls')),    
 ]
 ```
 
@@ -109,6 +109,9 @@ SSO_ROOT = 'https://sso.project.test'
 
 # Specify application token obtained in SSO server in the admin panel
 SSO_TOKEN = 'reej8Vt5kbCPJM9mZQqYsvfxC...'
+
+# Overriding event acceptor class (OPTIONAL). For more details read "Overriding event acceptor in subordinated service" partition
+SSO_EVENT_ACCEPTOR_CLASS = 'project.my_overrides.MySSOEventAcceptor'
 ```
 
 
@@ -138,18 +141,240 @@ Internal library urls (endpoints for services):
 
 Library urls for internal usage (endpoints for SSO-server side)
 
-- `sso/push/` - After successful authenticate SSO-server sends to this endpoint basic information about 
+- `sso/event/` - Event acceptor from SSO server. Look to “**SSO with non-Django project / Accepting events**” section
 
 - `sso/accept/` - User after successful authentication comes back. SSO-server redirect it to this URL for make Django authorization. Then after session is up - browser will redirect to the next URL.
-- `sso/deauthenticate/` - Acceptor for deauthentication messages from server side.
+
+
+
+# Overriding event acceptor in subordinated service
+
+For event processing you must declare own class and inherit it from base class located in `django_sso.sso_service.backends.EventAcceptor`. Inheritance are necessary. Arguments must  absolutely matches for overridden methods. 
+
+```python
+# project/my_overrides.py
+from django_sso.sso_service.backends import EventAcceptor
+
+# In case, when you need to do something after deauthentication
+class MyEventAcceptor(EventAcceptor):
+    def deauthenticate(self, username):
+        super().deauthenticate(usernmae)
+        # Here you can do own actions after deauthentication
+
+        
+# In other case, when you need to override default behavior of class
+class MyHardEventAcceptor(EventAcceptor):
+    def deauthenticate(self, username):
+        # Here you do own actions
+```
+
+
+
+Then next put path to this class to `settings.py`:
+
+```python
+SSO_EVENT_ACCEPTOR_CLASS = 'project.my_overrides.MySSOEventAcceptor'
+```
+
+
+
+# SSO with non-Django project
+
+### Basics
+
+Any external service must be registered in SSO server in admin panel section named  `SINGLE SIGN-ON / Subordinated services`. Then obtained token put to your script for next calls. And make service available directly for SSO server.
+
+In next examples i’ll use sso_server.test meaning SSO server.
+
+### Login page
+
+When unlogged user visit login page. In backend need to requests SSO token from SSO server.
+
+Fields:
+
+`token` - obtained from first step from SSO server
+
+`next_url` - relative URL, for redirect after successful authentication. (SSO will generate `Basic URL + Next URL` string and will forward user to it)
+
+```bash
+curl --request POST \
+  --url http://sso_server.test/sso/obtain/ \
+  --header 'Content-Type: application/x-www-form-urlencoded' \
+  --header 'X-Token: IJj42agKd231SzinVYqJMqq0buinM0wU' \
+  --data token=AhTu1Un5zef3eRMGsL3y7AbDt2213123123f \
+  --data next_url=/successful/page/
+```
+
+
+
+If all success, server will send to you authentication request token in JSON.
+
+```json
+{
+	"token": "NmyWRItAye0gDxX7CZhOFs2HKZtT3xyfdrq14TU"
+}
+```
+
+Then
+
+1) Write token to session. (In PHP - $_SESSION.)
+
+2) Redirect user to http://sso_server.test/login/?sso=NmyWRItAye0gDxX7CZhOFs2HKZtT3xyfdrq14TU. You should put obtained token to URL to “sso” parameter. User will be redirected to SSO login page. 
+
+On SSO login page next:
+
+If user successful logged on SSO, SSO sends to your event endpoint basic information about user. You should be it write to your authentication system. Then SSO server redirects user back to http://your_service.test/sso/accept/ where script recover SSO token from session and request information from SSO:
+
+`token` - Service token.
+
+`authentication_token` - SSO token, obtained in last step.
+
+```bash
+curl --request POST \
+  --url http://sso_server.test/sso/get/ \
+  --header 'Content-Type: application/x-www-form-urlencoded' \
+  --header 'X-Token: IJj42agKdp31SzinVYqJMqq0buinM0wU' \
+  --data token=AhTu1Un5zef3eRMGsL3y7AbDt2213123123f \
+  --data authentication_token=NmyWRItAye0gDxX7CZhOFs2HKZtT3xyfdrq14TU
+```
+
+If user already authorized. It will be returned next JSON:
+
+```json
+{
+    "authenticated": True, // Are successful authenticated
+    "user_identy": "somebody", // User identy (login or email...)
+    "next_url": "/admin/" // URL for redirect after successful auth
+}
+```
+
+In any other case:
+
+```json
+{
+	"error": "Authentication request token is'nt exists"
+}
+```
+
+If all success. You need to notify SSO server that token is used. Do next:
+
+`token` - Service token.
+
+`authentication_token` - SSO token, obtained in last step.
+
+```bash
+curl --request POST \
+  --url http://sso_server.test/sso/make_used/ \
+  --header 'Content-Type: application/x-www-form-urlencoded' \
+  --header 'X-Token: IJj42agKdp31SzinVYqJMqq0buinM0wU' \
+  --data token=AhTu1Un5zef3eRMGsL3y7AbDt2213123123f \
+  --data authentication_token=NmyWRItAye0gDxX7CZhOFs2HKZtT3xyfdrq14TU
+```
+
+And you will be get reply:
+
+```json
+{
+	"ok": true
+}
+```
+
+
+
+### Logout page
+
+You first purge data from session. Then send to SSO server deauthentication event.
+
+`token` - Service token.
+
+`user_identy` - username or email field. Same, that you obtained from http://sso_server.test/sso/get/ at login procedure.
+
+```bash
+curl --request POST \
+  --url http://127.0.0.1:5000/sso/deauthenticate/ \
+  --header 'Content-Type: application/x-www-form-urlencoded' \
+  --header 'X-Token: IJj42agKdp31SzinVYqJMqq0buinM0wU' \
+  --data token=AhTu1Un5zef3eRMGsL3y7AbDt2213123123f \
+  --data user_identy=someody
+```
+
+Will respond with
+
+```json
+{
+    "ok": true
+}
+```
+
+Meaning, that deauthentication completed for all services.
+
+
+
+### Accepting events
+
+You should create `/sso/event/` endpoint in your project.
+
+When user does successful authentication on SSO server, when user deleted or changed on SSO server, this library will send events to all subordinated services information about it. Account was deleted or marked as superuser or something other - SSO-server will emit events to all subordinated services. 
+
+For example. When user is marked as superuser, SSO-server will cast event to all subordinated services to `sso/event/`. Next written all possible events. `type`, `token` fields in event data are permanent.
+
+Events sends in JSON format via POST request.
+
+##### Create/update account
+
+When user created or updated or disabled or marked or unmarked as superuser also every time when user sign’s-in.
+
+```json
+{
+    "type": "update_account", // Event name
+    "token": "kaIrVNHF4msyLBJeaD4hSO", // Service token to authenticate SSO server
+    "username": "somebody", // Value from username field
+    
+    // Next fields may be not included in event. Because user model on SSO don't have it
+    "is_active": True, // Are active user now in SSO server
+    "is_staff": True, // Are user is staff member
+    "is_superuser": Trie, // Are user is superuser
+}
+```
+
+
+
+##### Deauthenticate
+
+When user somewhere requested deauthentication. This event will casts to all active subordinated services.
+
+```json
+{
+    "type": "deauthenticate", // Event name
+    "token": "kaIrVNHF4msyLBJeaD4hSO", // Service token to authenticate SSO server
+    "username": "somebody" // Value from username field
+}
+```
+
+
+
+For all requests to `sso/event/` subordinated service must be return next reponses
+
+```json
+// In successful case
+{
+    "ok": True
+}
+
+// Else if failured
+{
+    "error": "Error description here"
+}
+```
 
 
 
 # To do and coming fixes
 
 - Access control to subordinated services. Possibility to set available services for single user.
-
-- Any changes of user model must be immediately sent do subordinated services.
+- Event queue for pushing events instead of immediately pushing. For stability and efficiency.
+- Integration with popular frameworks and making plug-ins for popular languages. (I can accept your code as part of project - link to repository, for example.)
+- Sample vanilla PHP project
 
 
 

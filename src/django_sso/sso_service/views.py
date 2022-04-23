@@ -1,4 +1,6 @@
+import importlib
 import urllib.parse
+import json
 
 from django.conf import settings
 from django.contrib.auth import login, get_user_model
@@ -12,8 +14,8 @@ import django.contrib.auth
 
 from django_sso import deauthenticate_user
 from django_sso.exceptions import SSOException
-from django_sso.gate import set_sso_authorization_request_used
-from django_sso.service import get_sso_authorization_request, request_sso_authorization_request, \
+from django_sso.sso_gateway import set_sso_authorization_request_used
+from django_sso.sso_service import get_sso_authorization_request, request_sso_authorization_request, \
     request_deauthentication
 
 
@@ -46,7 +48,7 @@ def login_view(request):
 
 
 @login_required
-def for_logged_only(request):
+def for_logged_only_view(request):
     """
     The view for testing mechanism
     """
@@ -54,36 +56,7 @@ def for_logged_only(request):
     return HttpResponse(f'{_("You authorized as")} <b>{getattr(request.user, user_model.USERNAME_FIELD)}</b>.')
 
 
-@csrf_exempt
-def accept_user_information(request):
-    """
-    Создаёт пользователя по команде SSO-сервера. Удостоверение производится при
-    помощи токена, который указан в настройках текщего проекта для удостоверения
-    на SSO-сервере.
-    """
-    if (
-            request.method != 'POST'
-            or 'token' not in request.POST
-            or 'username' not in request.POST
-            or 'password' not in request.POST
-            or request.POST['token'] != settings.SSO_TOKEN
-    ):
-        return JsonResponse({'error': _('Incorrect request')}, status=400)
-
-    user_model = get_user_model()
-
-    user, created = user_model.objects.get_or_create(
-        **{f'{user_model.USERNAME_FIELD}': request.POST['username']}
-    )
-
-    if user.password != request.POST['password']:
-        user.password = request.POST['password']
-        user.save()
-
-    return JsonResponse({'ok': True})
-
-
-def authorize_from_sso(request: WSGIRequest):
+def authorize_from_sso_view(request: WSGIRequest):
     """
     Авторизует пользователя, который вернулся от SSO-сервера
     """
@@ -134,26 +107,50 @@ def logout(request):
 
 
 @csrf_exempt
-def deauthenticate(request):
-    """
-    Accept deauthenticate request from SSO server and process it
-    """
+def event_acceptor_view(request):
     if request.method != 'POST':
         return HttpResponse(status=405)
 
+    try:
+        data = json.loads(request.body.decode('utf8'))
+    except:
+        return HttpResponse(status=400)
+
     if (
-        not request.POST.get('token', '').strip()
-        or not request.POST.get('user_identy', '').strip()
+        not data.get('token', '').strip()
+        or data.pop('token') != settings.SSO_TOKEN
     ):
-        return JsonResponse({'error': _('Incorrect request')})
+        return JsonResponse({
+            'error': _('Token not provided or incorrect')
+        })
 
-    user_model = get_user_model()
+    if not data.get('type', '').strip():
+        return JsonResponse({'error': _('Event type field not set')})
 
-    user = user_model.objects.filter(**{
-        f'{user_model.USERNAME_FIELD}': request.POST['user_identy']
-    }).first()
+    try:
+        type_name = str(data.pop('type')).strip()
 
-    if user:
-        deauthenticate_user(getattr(user, user_model.USERNAME_FIELD))
+        if type_name.startswith('_'):
+            return JsonResponse({'error': _('Incorrect event type name')})
 
-    return JsonResponse({'ok': True})
+        module_name, class_name = getattr(
+            settings,
+            'SSO_EVENT_ACCEPTOR_CLASS',
+            'django_sso.sso_service.backend.EventAcceptor'
+        ).rsplit('.', 1)
+
+        dispatcher_class = getattr(importlib.import_module(module_name), class_name)
+
+        if not hasattr(dispatcher_class, type_name):
+            return JsonResponse({'error': f"{_('Event type not supported')} ({type_name})"})
+        else:
+            try:
+                getattr(dispatcher_class(), type_name)(**data)
+            except Exception as e:
+                return JsonResponse({'error': str(e)})
+
+            return JsonResponse({'ok': True})
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)})
+

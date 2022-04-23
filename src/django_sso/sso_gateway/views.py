@@ -21,6 +21,9 @@ class LoginView(django.contrib.auth.views.LoginView):
 
 	@csrf_exempt
 	def dispatch(self, request, *args, **kwargs):
+		if not request.user.is_anonymous:
+			return redirect(self.get_success_url())
+
 		return super(FormView, self).dispatch(request, *args, **kwargs)
 
 	def get_success_url(self):
@@ -38,7 +41,7 @@ class LoginView(django.contrib.auth.views.LoginView):
 
 		try:
 			auth_request.activate(self.request.user)
-		except SSOException:
+		except SSOException as e:
 			return reverse_lazy('welcome')
 
 		return f'{auth_request.service.base_url}/sso/accept/'
@@ -62,7 +65,7 @@ class LogoutView(View):
 
 class ObtainView(View):
 	"""
-	The view for external services for obtain SSO token
+	The view for Subordinated services for obtain SSO token
 	"""
 
 	@csrf_exempt
@@ -95,7 +98,7 @@ class GetAuthenticationRequestView(View):
 	"""
 	The view for the services to do obtain information about the authentication request by SSO-token
 	If
-	- token exist for requested service
+	- token exist for requested sso_service
 	- token are activated and wasn't used yet for login
 	will be returned the authentication request information as is, else 401 code with error
 	"""
@@ -198,7 +201,7 @@ class DeauthenticateView(View):
 		if user:
 			deauthenticate_user(getattr(user, user_model.USERNAME_FIELD))
 
-		for instance in Service.objects.filter(enabled=True).exclude(id=service.id).all():
-			instance.requeset_deauthenticate()
+			for instance in Service.objects.filter(enabled=True).exclude(id=service.id).all():
+				instance.deauthenticate(user)
 
 		return JsonResponse({'ok': True})

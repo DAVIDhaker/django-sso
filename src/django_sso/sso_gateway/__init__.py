@@ -1,12 +1,12 @@
 import requests
 from django.conf import settings
-
+from django.utils.translation import gettext_lazy as _
 from django_sso.exceptions import SSOException
 
 
 def set_sso_authorization_request_used(sso_token):
     """
-    For service side. Makes SSO request as used for authentication procedure (not available for next authentications)
+    For sso_service side. Makes SSO request as used for authentication procedure (not available for next authentications)
     """
     try:
         result = requests.post(settings.SSO_ROOT.rstrip('/') + '/sso/make_used/', {

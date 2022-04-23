@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-21 21:50+0300\n"
+"POT-Creation-Date: 2022-04-23 18:58+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Mr DAVIDhaker <me@davidhaker.ru>\n"
 "Language-Team: Mr DAVIDhaker <me@davidhaker.ru>\n"
@@ -32,73 +32,71 @@ msgstr "Логин/Почта"
 msgid "Password"
 msgstr "Пароль"
 
-#: models.py:17
+#: models.py:21
 msgid "Name"
 msgstr "Имя"
 
-#: models.py:18
+#: models.py:22
 msgid "Base url"
 msgstr "Базовая ссылка"
 
-#: models.py:19
+#: models.py:23
 msgid "Enabled"
 msgstr "Активно"
 
-#: models.py:20 models.py:53
+#: models.py:24 models.py:110
 msgid "Token"
 msgstr "Токен"
 
-#: models.py:42
-msgid "External service"
-msgstr "Внешний сервис"
+#: models.py:99
+#, fuzzy
+#| msgid "Subordinated services"
+msgid "Subordinated service"
+msgstr "Подчинённые сервисы"
 
-#: models.py:43
-msgid "External services"
-msgstr "Внешние сервисы"
+#: models.py:100
+msgid "Subordinated services"
+msgstr "Подчинённые сервисы"
 
-#: models.py:51
+#: models.py:108
 msgid "Service"
 msgstr "Сервис"
 
-#: models.py:52
+#: models.py:109
 msgid "Created at"
 msgstr "Создан"
 
-#: models.py:54
+#: models.py:111
 msgid "User identy"
 msgstr "Уникальный идентификатор пользователя"
 
-#: models.py:54
+#: models.py:111
 msgid "E-Mail, login, etc."
 msgstr "E-Mail, логин и т.д."
 
-#: models.py:55
+#: models.py:112
 msgid "Next url"
 msgstr "Базовая ссылка"
 
-#: models.py:55
+#: models.py:112
 msgid "To go after success auth"
 msgstr "Для перехода после авторизации"
 
-#: models.py:56
+#: models.py:113
 msgid "Request has been activated"
 msgstr "Запрос авторизации активирован"
 
-#: models.py:57
-msgid "Are used in external service"
+#: models.py:114
+msgid "Are used in external sso service"
 msgstr "Был применён во внешнем сервисе"
 
-#: models.py:60
+#: models.py:117
 msgid "Authentication request"
 msgstr "Запрос авторизации"
 
-#: models.py:61
+#: models.py:118
 msgid "Authentication requests"
 msgstr "Запросы авторизации"
-
-#: models.py:89
-msgid "From service returned incorrect data"
-msgstr "От сервиса получен некорректный ответ"
 
 #: templates/django_sso/login.html:23 templates/django_sso/welcome.html:18
 msgid "Sign in"
@@ -120,26 +118,26 @@ msgstr "гость"
 msgid "Sign out"
 msgstr "Выход"
 
-#: views.py:74 views.py:109 views.py:147 views.py:185
+#: views.py:77 views.py:112 views.py:150 views.py:188
 msgid "\"token\" is'nt set"
 msgstr "Поле \"token\" не заполненно"
 
-#: views.py:77
+#: views.py:80
 msgid "\"next_url\" is'nt set"
 msgstr "Поле \"next_url\" не заполненно"
 
-#: views.py:82 views.py:114 views.py:152
+#: views.py:85 views.py:117 views.py:155
 msgid "Application token is'nt exist"
 msgstr "Токен приложения не существует"
 
-#: views.py:117 views.py:155
+#: views.py:120 views.py:158
 msgid "Authentication request token is'nt set"
 msgstr "Токен запроса авторизации не задан"
 
-#: views.py:127 views.py:165
+#: views.py:130 views.py:168
 msgid "Authentication request token is'nt exists"
 msgstr "Токен запроса авторизации не существует"
 
-#: views.py:188
+#: views.py:191
 msgid "\"user_identy\" is'nt set"
 msgstr "Поле \"token\" не заполненно"
